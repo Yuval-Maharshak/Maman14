@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-enum bool {
+typedef enum {
 	false,
 	true
-}
+} bool;
+
+void assembler(char *);

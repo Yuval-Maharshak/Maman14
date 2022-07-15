@@ -1,0 +1,8 @@
+{
+    "C_Cpp.errorSquiggles": "Enabled",
+    "files.associations": {
+        "macroexpansion.h": "c",
+        "limits": "c",
+        "type_traits": "c"
+    }
+}
