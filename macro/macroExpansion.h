@@ -1,5 +1,7 @@
 #include "../head.h"
 
+#define lineCharCycle 10
+
 typedef struct MACRO {
     char *name;
     int startLine;
@@ -17,10 +19,14 @@ struct macroList {
 };
 typedef struct macroList macroList;
 
-FILE *macroExpand(char *fileName, FILE *src) ;
+FILE *macroExpand(char *fileName, FILE *src);
 bool legalMacro(char *);
-void getline(FILE *, char **);
+bool getLineAsmb(FILE *, char **);
 
 void insert(macroList *, macro *);
 macro * search(macroList *, char *);
 macroNode * createNode(macro);
+
+bool reservedWord(char *name);
+
+bool in(char *name, char *lst[], int length);

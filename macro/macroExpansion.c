@@ -42,7 +42,7 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
     if (!expanded)      /* probably can't fail so it's fine */
         return NULL;        /* might wanna do something different here */
     
-    while(getline(src, &line)) {
+    while(getLineAsmb(src, &line)) {
         word = strtok(line, "\t ");
         if (strcmp(word, "macro") == 0) {
             if (inMacro)
@@ -50,8 +50,9 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
             else {
                 word = strtok(NULL, " ");
                 if (legalMacro(word) && strtok(NULL, " ") == NULL && !search(&macroTable, word)) {
-                    tempMac = {word, ftell(src), -1};
-                    insert(&macroTable, &tempMac);
+                    tempMac = (macro *) malloc(sizeof(macro));
+                    tempMac->name = word;   tempMac->startLine = ftell(src);    tempMac->endLine = -1;
+                    insert(&macroTable, tempMac);
                     inMacro = true;
                 }
                 else
@@ -81,7 +82,7 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
         }
         else {
             if (!inMacro) {
-                fprintf(expanded, line);
+                fprintf(expanded, "%s", line);
             }
         }
         lineNum++;
@@ -116,6 +117,15 @@ bool in(char *name, char *lst[], int length) {
     return false;
 }
 
-int getLineAsmb(FILE *f, char **line) {        /* HOWW */
-
+bool getLineAsmb(FILE *f, char **line) {        /* assumes line point at an allocated block of at least LINE_LENGTH */
+    int i=0;
+    int c;
+    while((c = fgetc(f)) != '\n' && c != EOF) {
+        (*line)[i] = c;
+        i++;
+    }
+    if (c == EOF)
+        return false;
+    (*line)[i] = '\n';
+    return true;
 }

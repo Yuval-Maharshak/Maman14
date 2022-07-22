@@ -1,6 +1,7 @@
 #include "macroExpansion.h"
 
-void insert(macroList *lst, macroNode *n) {
+void insert(macroList *lst, macro *mac) {
+	macroNode *n = createNode(*mac);
 	if (lst == NULL)
 		return;
 	n->next = lst->head;

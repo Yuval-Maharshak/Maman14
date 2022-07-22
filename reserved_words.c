@@ -44,4 +44,4 @@ char *instruction_type[] = {
                             ".struct",
                             ".entry",
                             ".extern"
-}                    
+};                    
