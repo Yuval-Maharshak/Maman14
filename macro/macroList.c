@@ -6,11 +6,11 @@ void insert(macroList *lst, macroNode *n) {
 	n->next = lst->head;
 	lst->head = n;
 }
-macroNode * search(macroList *lst, char *name) {
+macro * search(macroList *lst, char *name) {
 	macroNode *ptr;
 	for(ptr = lst->head; ptr != NULL; ptr = ptr->next) {
 		if (strcmp(name, ptr->m.name) == 0)
-			return ptr;
+			return &(ptr->m);
 	}
 	return NULL;
 }

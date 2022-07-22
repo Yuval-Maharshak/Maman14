@@ -19,3 +19,8 @@ typedef struct macroList macroList;
 
 FILE *macroExpand(char *fileName, FILE *src) ;
 bool legalMacro(char *);
+void getline(FILE *, char **);
+
+void insert(macroList *, macro *);
+macro * search(macroList *, char *);
+macroNode * createNode(macro);
