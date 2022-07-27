@@ -30,10 +30,11 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
     FILE *expanded;                 /* the expanded file */
     macroList macroTable = {NULL};  /* the macro collection */
     bool inMacro = false;           /* a flag to check if we're in a macro defenition */
-    char *line = (char *) malloc(sizeof(char) * lineLength);
-    char *word;
+    char *content = (char *) malloc(sizeof(char) * lineLength), *line = (char *) malloc(sizeof(char) * lineLength);
+    char *word, *token=" \t\n";
     macro * tempMac;
     int i, temp, lineNum=0;          /* for indexing */
+    bool finalLineFlag;
 
     strncpy(expandedFileName, fileName, strlen(fileName) - 1);      /* copy the fileName without as ending */
     strcat(expandedFileName, "m");     /* adds am ending */
@@ -42,16 +43,28 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
     if (!expanded)      /* probably can't fail so it's fine */
         return NULL;        /* might wanna do something different here */
     
-    while(getLineAsmb(src, &line)) {
-        word = strtok(line, "\t ");
-        if (strcmp(word, "macro") == 0) {
+    while(finalLineFlag) {
+        finalLineFlag = getLineAsmb(src, &line);
+        strcpy(content, line);
+        word = strtok(content, token);
+        if (!word) {                        /* an empty line (only blank characters) */
+            if (!inMacro)
+                fprintf(expanded, "%s", content);
+            printf("Empty line %d\n", lineNum);
+        }
+        else if (strcmp(word, "macro") == 0) {
+            printf("macro decleration at line %d\n", lineNum);
             if (inMacro)
                 printf("Error: macro %s defined inside macro %s at line %d\n", strtok(NULL, " "), macroTable.head->m.name, lineNum);        /* this will cause unexpected behaviour when Error (need to check) */
             else {
-                word = strtok(NULL, " ");
+                word = strtok(NULL, token);
+                printf("$%s$", word);
                 if (legalMacro(word) && strtok(NULL, " ") == NULL && !search(&macroTable, word)) {
-                    tempMac = (macro *) malloc(sizeof(macro));
-                    tempMac->name = word;   tempMac->startLine = ftell(src);    tempMac->endLine = -1;
+                    tempMac = (macro *) malloc(sizeof(macro)); /**/
+                    tempMac->name = (char *) malloc(sizeof(char) * strlen(word));
+                    strcpy(tempMac->name, word);
+                    tempMac->startLine = ftell(src);
+                    tempMac->endLine = -1;
                     insert(&macroTable, tempMac);
                     inMacro = true;
                 }
@@ -60,72 +73,58 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
             }
                 
         }
-        else if (strcmp(word, "end_macro")) {
+        else if (strcmp(word, "endmacro") == 0) {
+            printf("ending a macro at line %d\n", lineNum);
             if (!inMacro) 
                 printf("Error: end_macro statement outsided of a macro at line %d \n", lineNum);
+            /* else if there is another word - error */
             else {
-                macroTable.head->m.endLine = ftell(src);
+                macroTable.head->m.endLine = ftell(src) - strlen(line);
                 inMacro = false;
             }
         }
-        else if (tempMac = search(&macroTable, word)) {
+        else if ((tempMac = search(&macroTable, word))) {
+            printf("macro name at line %d\n", lineNum);
             if (inMacro)
                 printf("Error: macro %s is called inside macro %s at line %d\n", tempMac->name, macroTable.head->m.name, lineNum);
             else {
                 temp = ftell(src);
                 fseek(src, tempMac->startLine, SEEK_SET);
-                for(i=tempMac->startLine; i<tempMac->endLine; i++) {
-                    fprintf(expanded, "%c", fgetc(src));
+                for(i=tempMac->startLine+1; i<tempMac->endLine; i++) {     /* i is +1 because ftell is where \n is in line so we need to get one after */
+                    char h = fgetc(src);
+                    fprintf(expanded, "%c", h);
                 }
                 fseek(src, temp, SEEK_SET);
             }
         }
         else {
+            
             if (!inMacro) {
-                fprintf(expanded, "%s", line);
+                printf("normal line outside macro at %d\n", lineNum);
+                fprintf(expanded, "%s\n", line);
             }
+            else
+                printf("normal line inside macro at %d\n", lineNum);
         }
         lineNum++;
     }
     
     fclose(expanded);
     free(expandedFileName);
-    free(line);
+    free(content);
 
     return expanded;
 }
 
-bool legalMacro(char *name) {       /* add to the paramaters macroArr */
-    /*
-        illigal names: assembly's commands, starting numbers, already in macroArr, 
-    */
-    if (reservedWord(name))
-        return false;
-    if (isdigit(name[0]))
-        return false;
-    return true;
-}
-bool reservedWord(char *name) {
-    return in(name, two_operands_cmd,5) || in(name, one_operands_cmd,9) || in(name, zero_operands_cmd,2) || in(name, regs_list,8) || in(name, instruction_type,5);
-}
-
-bool in(char *name, char *lst[], int length) {
-    for (; length > 0; length--) {
-        if (strcmp(name, lst[length-1]) == 0)
-            return true;
-    }
-    return false;
-}
 
 bool getLineAsmb(FILE *f, char **line) {        /* assumes line point at an allocated block of at least LINE_LENGTH */
     int i=0;
     int c;
+    memset(*line,0,strlen(*line));
     while((c = fgetc(f)) != '\n' && c != EOF) {
         (*line)[i] = c;
         i++;
     }
-    if (c == EOF)
-        return false;
-    (*line)[i] = '\n';
-    return true;
+    (*line)[i] = '\0';
+    return c != EOF;
 }

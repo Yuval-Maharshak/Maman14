@@ -7,7 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "${file} /home/yuval/Desktop/progj/maman14/macro/macroList.c /home/yuval/Desktop/progj/maman14/macro/macroExpansion.c /home/yuval/Desktop/progj/maman14/textHandling.c",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

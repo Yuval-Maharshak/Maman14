@@ -1,5 +1,9 @@
 #include "../head.h"
 
+#ifndef macroExpansion_INCLUDED
+
+#define macroExpansion_INCLUDED 0
+
 #define lineCharCycle 10
 
 typedef struct MACRO {
@@ -26,7 +30,10 @@ bool getLineAsmb(FILE *, char **);
 void insert(macroList *, macro *);
 macro * search(macroList *, char *);
 macroNode * createNode(macro);
+void printList(macroList *lst);
 
 bool reservedWord(char *name);
 
 bool in(char *name, char *lst[], int length);
+
+#endif

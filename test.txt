@@ -1,6 +1,7 @@
-Hello World!!!
+macro m1
+mov #1 r1
+endmacro
 
-Hello World!!!!
-Word
-WOWOWOWOOWOW
+mov #2 r2
 
+m1

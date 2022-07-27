@@ -5,6 +5,7 @@ int main(int argc, char *argv[]) {
     for(i = 1; i<argc; i++) {
         assembler(argv[i]);
     }
+    return 0;
 }
 
 void assembler(char *fileName) {        /* not sure on return type, num of args */

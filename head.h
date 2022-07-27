@@ -3,7 +3,10 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include "reserved_words.c"
+
+#ifndef head_INCLUDED
+
+#define head_INCLUDED 0
 
 #define lineLength 81
 
@@ -11,3 +14,5 @@ enum BOOL {false, true};
 typedef enum BOOL bool;
 
 void assembler(char *);
+
+#endif
