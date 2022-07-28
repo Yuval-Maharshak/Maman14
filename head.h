@@ -14,5 +14,6 @@ enum BOOL {false, true};
 typedef enum BOOL bool;
 
 void assembler(char *);
+FILE *macroExpand(char *fileName, FILE *src);
 
 #endif

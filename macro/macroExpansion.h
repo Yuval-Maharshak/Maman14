@@ -4,7 +4,7 @@
 
 #define macroExpansion_INCLUDED 0
 
-#define lineCharCycle 10
+#define lineCharCycle 10	/* delete */
 
 typedef struct MACRO {
     char *name;

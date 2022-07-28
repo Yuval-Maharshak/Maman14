@@ -44,4 +44,9 @@ char *instruction_type[] = {
                             ".struct",
                             ".entry",
                             ".extern"
-};                    
+};      
+
+char * macroRelated[] = {
+                         "macro",
+                         "endmacro"
+};
