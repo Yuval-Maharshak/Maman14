@@ -18,7 +18,7 @@ void assembler(char *fileName) {        /* not sure on return type, num of args 
     ...
 
     */
-    srcExpand = preAssembler(fileName);
+    FILE *srcExpand = preAssembler(fileName);
 
 }      
 FILE *preAssembler(char *fileName) {
@@ -27,8 +27,10 @@ FILE *preAssembler(char *fileName) {
    if (!src)
         printf("Error: file name %s isn't a file :( ", fileName);
    srcExpand = macroExpand(fileName, src);
-   return srcExpand
+   return srcExpand;
 }
+
+
 
 
 

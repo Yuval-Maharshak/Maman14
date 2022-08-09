@@ -8,7 +8,7 @@
 
 #define head_INCLUDED 0
 
-#define lineLength 81
+#define LINE_LENGTH 81
 
 enum BOOL {false, true};
 typedef enum BOOL bool;

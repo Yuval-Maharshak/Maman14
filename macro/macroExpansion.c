@@ -5,11 +5,10 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
     FILE *expanded;                 /* the expanded file */
     macroList macroTable = {NULL};  /* the macro collection */
     bool inMacro = false;           /* a flag to check if we're in a macro defenition */
-    char *content = (char *) malloc(sizeof(char) * lineLength), *line = (char *) malloc(sizeof(char) * lineLength);
+    char *content = (char *) malloc(sizeof(char) * LINE_LENGTH), *line = (char *) malloc(sizeof(char) * LINE_LENGTH);
     char *word, *token=" \t\n";
     macro * tempMac;
     int i, temp, lineNum=1;          /* for indexing */
-    bool finalLineFlag;
 
     strncpy(expandedFileName, fileName, strlen(fileName) - 1);      /* copy the fileName without as ending */
     strcat(expandedFileName, "m");     /* adds am ending */
@@ -18,8 +17,7 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
     if (!expanded)      /* probably can't fail so it's fine */
         return NULL;        /* might wanna do something different here */
     
-    while(finalLineFlag) {
-        finalLineFlag = getLineAsmb(src, &line);
+    while(fgets(line, LINE_LENGTH ,src)) {
         strcpy(content, line);
         word = strtok(content, token);
         if (!word) {                        /* an empty line (only blank characters) */
@@ -51,7 +49,7 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
             else if (strtok(NULL, token))
                 printf("Error: word after endmacro at line %d\n", lineNum);
             else {
-                macroTable.head->m.endLine = ftell(src) - strlen(line);
+                macroTable.head->m.endLine = ftell(src) - strlen(line) + 1;
                 inMacro = false;
             }
         }
@@ -70,7 +68,7 @@ FILE *macroExpand(char *fileName, FILE *src) {          /* not sure if needed sr
         }
         else {
             if (!inMacro)
-                fprintf(expanded, "%s\n", line);
+                fprintf(expanded, "%s", line);
         }
         lineNum++;
     }
